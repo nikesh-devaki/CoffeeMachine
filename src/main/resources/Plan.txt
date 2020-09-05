@@ -1,0 +1,26 @@
+Nouns
+Breverage{
+ name
+ ingrediant[]
+ qty[]
+
+}
+Types of Breverages
+
+
+
+Ingrediant
+INgrediant types
+{
+ qty
+}
+
+
+
+verbs:
+startMachine
+Prompt user
+CheckAvailability
+Prepare()
+update qunantities
+
