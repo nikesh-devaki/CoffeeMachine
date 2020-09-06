@@ -1,32 +1,32 @@
 package com.ndevaki.coffeeMachine.model;
 
-import com.ndevaki.coffeeMachine.model.beverage.Beverage;
 import com.ndevaki.coffeeMachine.model.exception.InvalidInputException;
-import com.ndevaki.coffeeMachine.model.ingrediant.Ingrediant;
 
+import javax.naming.InvalidNameException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeverageProcessor {
+class BeverageProcessor {
    private static final Stock ingrediantStock =new Stock();
 
    public static void loadBreverage(String ingrediantName,int qty) throws InvalidInputException {
        ingrediantStock.addIngrediantToStock(ingrediantName,qty);
        return;
    }
-   public static String prepare(String beverageName){
+
+   protected static String prepare(String beverageName) throws InvalidInputException {
        Beverage beverage=getBeverage(beverageName);
-       List<Ingrediant> lessQty=checkQuantity(beverage);
+       List<Ingrediants> lessQty=checkQuantity(beverage);
        if(!lessQty.isEmpty()){
            return constructMessage(lessQty);
        }
         updateQuantity(beverage);
-        return beverageName.getName()+" is prepared";
+        return beverage.getName()+" is prepared";
    }
 
-   protected static ArrayList<Ingrediant> checkQuantity(Beverage beverage){
-       ArrayList<Ingrediant> lessQty=new ArrayList<>();
-       for(Ingrediant ingrediant:beverage.getIngrediants()){
+   protected static ArrayList<Ingrediants> checkQuantity(Beverage beverage){
+       ArrayList<Ingrediants> lessQty=new ArrayList<>();
+       for(Ingrediants ingrediant:beverage.getIngrediants()){
            int minQty=beverage.minQuantity(ingrediant);
            if(minQty>ingrediantStock.getAvialableQty(ingrediant)){
                lessQty.add(ingrediant);
@@ -36,15 +36,30 @@ public class BeverageProcessor {
    }
 
    protected static void  updateQuantity(Beverage beverage){
-       for(Ingrediant ingrediant:beverage.getIngrediants()){
+       for(Ingrediants ingrediant:beverage.getIngrediants()){
            ingrediantStock.consume(ingrediant,beverage.minQuantity(ingrediant));
        }
    }
 
-   protected String constructMessage(ArrayList<Ingrediant> ingrediants){
-       StringBuilder message=new StringBuilder("")
-       for(Ingrediant ingrediant:ingrediants){
-           message.append("")
+   protected static String constructMessage(List<Ingrediants> ingrediants){
+       StringBuilder message=new StringBuilder("");
+       for(Ingrediants ingrediant:ingrediants){
+           message.append(ingrediant.label+",");
        }
+       message.append(" are not available in sufficent quantity");
+       return  message.toString();
+   }
+
+   private static Beverage getBeverage(String name) throws InvalidInputException {
+       Beverage beverage;
+       switch(name){
+           case "HotCoffee":
+               return new HotCoffee();
+           case "HotTea":
+               return new HotTea();
+           default:
+               throw new InvalidInputException("INvalid beverage name");
+       }
+
    }
 }
